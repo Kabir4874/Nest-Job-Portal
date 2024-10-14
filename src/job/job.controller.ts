@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { PostJobDto } from './dto/job.dto';
 import { JobService } from './job.service';
@@ -15,6 +15,7 @@ export class JobController {
     return { job, message: 'Job created successfully', success: true };
   }
 
+  @Get()
   async getAllJobs(@Query() query: any) {
     const jobs = await this.jobService.getAllJobs(query);
     return { jobs, success: true };
