@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CompanyService } from './company.service';
 import { RegisterCompanyDto } from './dto/company.dto';
@@ -27,5 +36,17 @@ export class CompanyController {
     const userId = req.user.id;
     const result = await this.companyService.getCompanies(userId);
     return { result, success: true };
+  }
+
+  @Get(':id')
+  async getCompanyById(@Param('id') companyId: string) {
+    const company = await this.companyService.getCompanyById(companyId);
+    return { company, success: true };
+  }
+
+  @Delete(':id')
+  async deleteCompany(@Param('id') companyId: string) {
+    const result = await this.companyService.deleteCompany(companyId);
+    return { result, success: true, message: 'Company deleted successfully' };
   }
 }

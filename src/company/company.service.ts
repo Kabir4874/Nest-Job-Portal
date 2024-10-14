@@ -44,4 +44,22 @@ export class CompanyService {
     }
     return companies;
   }
+
+  async getCompanyById(id: string) {
+    const company = await this.prisma.company.findUnique({ where: { id } });
+
+    if (!company) {
+      throw new NotFoundException('Company not found');
+    }
+    return company;
+  }
+
+  async deleteCompany(id: string) {
+    const company = await this.prisma.company.delete({ where: { id } });
+
+    if (!company) {
+      throw new NotFoundException('Company not deleted');
+    }
+    return company;
+  }
 }
