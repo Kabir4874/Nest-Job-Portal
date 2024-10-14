@@ -36,6 +36,7 @@ model User {
   Company                   Company[]
   Application               Application[]
   Favorites                 Favorites[]
+  Job                       Job[]
 }
 
 model Job {
@@ -48,6 +49,8 @@ model Job {
   jobType         String
   experienceLevel String
   position        Int
+  createdById     String        @db.ObjectId
+  user            User          @relation(fields: [createdById], references: [id])
   companyId       String        @db.ObjectId
   company         Company       @relation(fields: [companyId], references: [id])
   createdAt       DateTime      @default(now())
