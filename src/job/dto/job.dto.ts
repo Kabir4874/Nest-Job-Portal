@@ -11,11 +11,15 @@ export class PostJobDto {
 
   @IsNotEmpty()
   @IsArray()
-  requirement: string[];
+  requirements: string[];
 
   @IsNotEmpty()
   @IsNumber()
   salary: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  position: number;
 
   @IsNotEmpty()
   @IsString()
