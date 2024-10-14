@@ -1,7 +1,16 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
-import { RegisterUserDto } from './dto/user.dto';
-import { UserService } from './user.service';
+import {
+  Body,
+  Controller,
+  Post,
+  Put,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RegisterUserDto, UpdateUserDto } from './dto/user.dto';
+import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
@@ -22,6 +31,54 @@ export class UserController {
         httpOnly: true,
         sameSite: 'strict',
       });
-    } catch (error) {}
+      return res.status(200).json(userData);
+    } catch (error) {
+      return res.status(error.status || 500).json({
+        message: error.message || 'Internal server error',
+        success: false,
+      });
+    }
+  }
+
+  @Post('logout')
+  async logout(@Res() res: Response) {
+    try {
+      const result = await this.userService.logout();
+
+      res.cookie('token', '', {
+        maxAge: 0,
+        httpOnly: true,
+        sameSite: 'strict',
+      });
+      return res.status(200).json(result);
+    } catch (error) {
+      return res.status(500).json({
+        message: error.message,
+        success: false,
+      });
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('updateProfile')
+  async updateProfile(
+    @Req() req: any,
+    @Body() updateUserDto: UpdateUserDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const userId = req.user.id;
+      const user = await this.userService.updateProfile(userId, updateUserDto);
+      return res.status(200).json({
+        message: 'Profile updated successfully',
+        user,
+        success: true,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: error.message,
+        success: false,
+      });
+    }
   }
 }
