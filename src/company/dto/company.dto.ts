@@ -18,7 +18,7 @@ export class RegisterCompanyDto {
   location?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   logo?: string;
 }
 
@@ -40,6 +40,6 @@ export class UpdateCompanyDto {
   location?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   logo?: string;
 }
