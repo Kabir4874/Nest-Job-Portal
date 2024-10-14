@@ -51,28 +51,20 @@ export class JobService {
     if (keyword || location || jobType || salary) {
       jobs = await this.prisma.job.findMany({
         where: {
-          ...(keyword !== '' && {
+          ...(keyword && {
             OR: [
               { title: { contains: keyword, mode: 'insensitive' } },
               { description: { contains: keyword, mode: 'insensitive' } },
             ],
           }),
 
-          ...(location !== '' && {
+          ...(location && {
             location: { contains: location, mode: 'insensitive' },
           }),
 
-          ...(jobType !== '' && {
+          ...(jobType && {
             jobType: { contains: jobType, mode: 'insensitive' },
           }),
-
-          ...(salary !== '' && {
-            OR: [
-              { title: { contains: salary, mode: 'insensitive' } },
-              { description: { contains: salary, mode: 'insensitive' } },
-            ],
-          }),
-
           ...(salary &&
             salaryRange?.length && {
               salary: {
@@ -85,7 +77,11 @@ export class JobService {
         orderBy: { createdAt: 'desc' },
       });
     } else {
-      jobs = await this.prisma.job.findMany({ skip: 0, take: 6 });
+      jobs = await this.prisma.job.findMany({
+        skip: 0,
+        take: 6,
+        include: { company: true },
+      });
     }
 
     if (jobs.length === 0) {
