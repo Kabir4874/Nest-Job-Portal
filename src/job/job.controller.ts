@@ -38,7 +38,7 @@ export class JobController {
 
   @UseGuards(JwtAuthGuard)
   @Post('favorite/:id')
-  async getJobsByUserId(@Req() req, @Param('id') jobId: string) {
+  async createFavorite(@Req() req, @Param('id') jobId: string) {
     const userId = req.user.id;
     const result = await this.jobService.createFavorite(jobId, userId);
     return { result, success: true };
