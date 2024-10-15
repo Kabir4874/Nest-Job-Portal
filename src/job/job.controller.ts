@@ -37,6 +37,14 @@ export class JobController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('admin')
+  async getJobsByUserId(@Req() req: any) {
+    const userId = req.user.id;
+    const jobs = await this.jobService.getJobsByUserId(userId);
+    return { jobs, success: true };
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('favorite/:id')
   async createFavorite(@Req() req, @Param('id') jobId: string) {
     const userId = req.user.id;
@@ -47,6 +55,7 @@ export class JobController {
   @UseGuards(JwtAuthGuard)
   @Post('favorites')
   async getFavorites(@Req() req) {
+    console.log('get favorites');
     const userId = req.user.id;
     const result = await this.jobService.getFavorites(userId);
     return { result, success: true };

@@ -99,6 +99,22 @@ export class JobService {
     return job;
   }
 
+  async getJobsByUserId(createdById: string) {
+    try {
+      const jobs = await this.prisma.job.findMany({
+        where: { createdById },
+        include: { company: true },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (jobs.length === 0) {
+        throw new NotFoundException('Jobs not found');
+      }
+      return jobs;
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
+  }
+
   async createFavorite(jobId: string, userId: string) {
     const fav = await this.prisma.favorites.findFirst({
       where: { jobId, userId },
