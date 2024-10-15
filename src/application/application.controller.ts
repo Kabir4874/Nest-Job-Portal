@@ -1,6 +1,16 @@
-import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ApplicationService } from './application.service';
+import { UpdateStatusDto } from './dto/application.dto';
 
 @Controller('application')
 export class ApplicationController {
@@ -27,5 +37,22 @@ export class ApplicationController {
   async getApplicants(@Param('id') jobId: string) {
     const job = await this.applicationService.getApplicants(jobId);
     return { job, success: true };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('update-status/:id')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() updateStatusDto: UpdateStatusDto,
+  ) {
+    const updatedApplication = await this.applicationService.updateStatus(
+      id,
+      updateStatusDto,
+    );
+    return {
+      message: 'Status updated successfully',
+      updatedApplication,
+      success: true,
+    };
   }
 }

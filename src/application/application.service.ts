@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { UpdateStatusDto } from './dto/application.dto';
 
 @Injectable()
 export class ApplicationService {
@@ -57,5 +58,20 @@ export class ApplicationService {
       throw new NotFoundException('Job not found');
     }
     return job;
+  }
+
+  async updateStatus(id: string, updateStatusDto: UpdateStatusDto) {
+    const { status } = updateStatusDto;
+    const application = await this.prisma.application.findUnique({
+      where: { id },
+    });
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+    const updatedApplication = await this.prisma.application.update({
+      where: { id },
+      data: { status: status?.toLowerCase() },
+    });
+    return updatedApplication;
   }
 }
