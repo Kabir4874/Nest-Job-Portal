@@ -90,4 +90,12 @@ export class JobService {
 
     return jobs;
   }
+
+  async getJobById(id: string) {
+    const job = await this.prisma.job.findUnique({ where: { id } });
+    if (!job) {
+      throw new NotFoundException('Job not found');
+    }
+    return job;
+  }
 }

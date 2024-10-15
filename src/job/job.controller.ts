@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   Req,
@@ -27,5 +28,11 @@ export class JobController {
   async getAllJobs(@Query() query: string) {
     const jobs = await this.jobService.getAllJobs(query);
     return { jobs, success: true };
+  }
+
+  @Get(':id')
+  async getJobById(@Param('id') jobId: string) {
+    const job = await this.jobService.getJobById(jobId);
+    return { job, success: true };
   }
 }
