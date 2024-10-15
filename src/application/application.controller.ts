@@ -1,4 +1,31 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApplicationService } from './application.service';
 
 @Controller('application')
-export class ApplicationController {}
+export class ApplicationController {
+  constructor(private readonly applicationService: ApplicationService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id')
+  async applyJob(@Req() req: any, @Param('id') jobId: string) {
+    const userId = req.user.id;
+    const application = await this.applicationService.applyJob(userId, jobId);
+
+    return { message: 'Job applied successfully', application, success: true };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getAppliedJobs(@Req() req: any) {
+    const userId = req.user.id;
+    const applications = await this.applicationService.getAppliedJobs(userId);
+    return { applications, success: true };
+  }
+
+  @Get(':id')
+  async getApplicants(@Param('id') jobId: string) {
+    const job = await this.applicationService.getApplicants(jobId);
+    return { job, success: true };
+  }
+}
