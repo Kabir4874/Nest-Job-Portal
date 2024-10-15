@@ -43,4 +43,12 @@ export class JobController {
     const result = await this.jobService.createFavorite(jobId, userId);
     return { result, success: true };
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('favorites')
+  async getFavorites(@Req() req) {
+    const userId = req.user.id;
+    const result = await this.jobService.getFavorites(userId);
+    return { result, success: true };
+  }
 }

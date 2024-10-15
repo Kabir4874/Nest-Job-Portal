@@ -100,17 +100,29 @@ export class JobService {
   }
 
   async createFavorite(jobId: string, userId: string) {
-    let newFav: any;
     const fav = await this.prisma.favorites.findFirst({
       where: { jobId, userId },
     });
     if (fav) {
       throw new NotFoundException('This job is already in favorite');
     }
-    newFav = await this.prisma.favorites.create({ data: { userId, jobId } });
+    const newFav = await this.prisma.favorites.create({
+      data: { userId, jobId },
+    });
     if (!newFav) {
       throw new NotFoundException('Job not added in favorite');
     }
     return newFav;
+  }
+
+  async getFavorites(userId: string) {
+    const getJobs = await this.prisma.favorites.findMany({
+      where: { userId },
+      include: { job: { include: { company: true } } },
+    });
+    if (!getJobs) {
+      throw new NotFoundException('Jobs not found');
+    }
+    return getJobs;
   }
 }
